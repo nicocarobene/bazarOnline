@@ -1,5 +1,5 @@
 import type { Product } from '../utils/types'
-import { products as ListOfProduct } from '../../../../products.json'
+import { products as ListOfProduct } from '../mock/products.json'
 export const getResult = async ({ queryParam }: { queryParam: string }): (Promise<{ result: Product[], categories: {[key: string]: number} }>) => {
   const query = queryParam === '' ? 0 : queryParam.toLowerCase()
   let products
