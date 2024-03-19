@@ -1,5 +1,9 @@
 ---
+import type { Product } from '../utils/types'
 import Card from './Card.astro'
+interface Props {
+  result: Product[]
+}
 const { result = [] } = Astro.props
 ---
 
