@@ -1,5 +1,5 @@
-import type { Product, Products } from '../utils/types'
-// import { products as ListOfProduct } from '../mock/products.json'
+import type { Product } from '../utils/types'
+import { products as ListOfProduct } from '../mock/products.json'
 
 export const getResult = async ({ queryParam }: { queryParam: string }): (Promise<{ result: Product[], categories: { [key: string]: number } }>) => {
   const query = queryParam === '' ? 0 : queryParam.toLowerCase()
@@ -7,12 +7,17 @@ export const getResult = async ({ queryParam }: { queryParam: string }): (Promis
     if (!res.ok) {
       throw new Error('Error fetching data')
     }
-    const result: Promise<Products> = res.json()
+    const result: Promise<Product[]> = res.json()
     return result
   })
-  const categories = {}
+    .catch(() => {
+      console.error('Error fetching data to Bun server')
+      return null
+    })
+
+  const categories: Record<string, number> = {}
   if (products) {
-    products.products.forEach((item) => {
+    products.forEach((item) => {
       if (categories[item.category]) {
         categories[item.category] += 1
         return
@@ -20,25 +25,10 @@ export const getResult = async ({ queryParam }: { queryParam: string }): (Promis
       categories[item.category] = 1
     })
   }
-
-  return { result: [], categories: {} }
-
-  // let products: typeProducts
-  // try {
-  //   const result = await fetch(`http://localhost:3000/api/items?q=${query}`)
-  //   if (!result.ok) throw new Error('Error fetching data')
-  //   products = await result.json()
-  //   console.log(products)
-  // } catch (error) {
-  //   console.error('Error fetching data to Bun server')
-  // }
-
-  // 
-
-
-
-  // return { result, categories }
+  const result = products ?? ListOfProduct
+  return { result, categories }
 }
+
 export const getItemById = ({ id }: { id: string }): Promise<Product> => {
   return fetch(`http://localhost:3000/api/item/${id}`)
     .then((res) => {
